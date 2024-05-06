@@ -1,0 +1,25 @@
+#root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0 auto;
+  background-color: #202025;
+  color: #f5fcfc;
+  font-family: 'Courier', sans-serif;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #303034;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: calc(100% - 60px);
+  overflow: hidden;
+}

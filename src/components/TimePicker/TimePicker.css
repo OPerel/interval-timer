@@ -1,0 +1,10 @@
+.time-picker {
+  display: flex;
+  gap: 8px;
+  font-size: 3.6rem;
+}
+
+.time-section {
+  flex: 1;
+  text-align: center;
+}
