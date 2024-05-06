@@ -1,4 +1,11 @@
-import { Dispatch, SetStateAction, useState, TouchEvent } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useState,
+  TouchEvent,
+  useRef,
+  MutableRefObject,
+} from 'react';
 import './TimePicker.css';
 
 const renderOptions = (value: number, max: number) => {
@@ -17,17 +24,21 @@ const TimePicker = () => {
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
+  const deltaYRef = useRef(0);
 
-  const handleScroll = (
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    deltaYRef.current = event.touches[0].clientY;
+  };
+
+  const handleTouchMove = (
     event: TouchEvent<HTMLDivElement>,
     setValue: Dispatch<SetStateAction<number>>,
     max: number,
+    deltaYRef: MutableRefObject<number>,
   ) => {
-    // const delta = Math.sign(event.deltaY);
-    const touch = event.touches[0];
-    const deltaY = touch.clientY - (touch.target as any).offsetTop;
-    const delta =
-      deltaY > 0 ? Math.ceil(deltaY / 500) : Math.floor(deltaY / 500);
+    const deltaY = event.touches[0].clientY - deltaYRef.current; // Calculate the difference in touch positions
+    const sensitivity = 0.05; // Adjust sensitivity to control scrolling speed
+    const delta = Math.round(deltaY * sensitivity);
     setValue((prev) => {
       let newValue = prev + delta;
       if (newValue < 0) {
@@ -40,28 +51,38 @@ const TimePicker = () => {
   };
 
   return (
-    <div className="time-picker">
-      <div
-        className="time-section"
-        onTouchMove={(e) => handleScroll(e, setHours, 99)}
-      >
-        {renderOptions(hours, 99)}
+    <>
+      <div className="titles">
+        <h4>Hours</h4>
+        <h4>Minutes</h4>
+        <h4>Seconds</h4>
       </div>
-      <div>:</div>
-      <div
-        className="time-section"
-        onTouchMove={(e) => handleScroll(e, setMinutes, 59)}
-      >
-        {renderOptions(minutes, 59)}
+      <div className="time-picker">
+        <div
+          className="time-section"
+          onTouchStart={handleTouchStart}
+          onTouchMove={(e) => handleTouchMove(e, setHours, 99, deltaYRef)}
+        >
+          {renderOptions(hours, 99)}
+        </div>
+        <div>:</div>
+        <div
+          className="time-section"
+          onTouchStart={handleTouchStart}
+          onTouchMove={(e) => handleTouchMove(e, setMinutes, 59, deltaYRef)}
+        >
+          {renderOptions(minutes, 59)}
+        </div>
+        <div>:</div>
+        <div
+          className="time-section"
+          onTouchStart={handleTouchStart}
+          onTouchMove={(e) => handleTouchMove(e, setSeconds, 59, deltaYRef)}
+        >
+          {renderOptions(seconds, 59)}
+        </div>
       </div>
-      <div>:</div>
-      <div
-        className="time-section"
-        onTouchMove={(e) => handleScroll(e, setSeconds, 59)}
-      >
-        {renderOptions(seconds, 59)}
-      </div>
-    </div>
+    </>
   );
 };
 
