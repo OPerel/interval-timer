@@ -1,0 +1,9 @@
+.viewport {
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+
+.viewport .item {
+  scroll-snap-stop: normal;
+  scroll-snap-align: start;
+}

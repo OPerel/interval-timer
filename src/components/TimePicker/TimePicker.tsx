@@ -1,12 +1,13 @@
 import {
   Dispatch,
+  MutableRefObject,
   SetStateAction,
-  useState,
   TouchEvent,
   useRef,
-  MutableRefObject,
+  useState,
 } from 'react';
 import './TimePicker.css';
+import VirtualScroller from '../VirtualScroller/VirtualScroller.tsx';
 
 const renderOptions = (value: number, max: number) => {
   const prevValue = value === 0 ? max : value - 1;
@@ -19,6 +20,35 @@ const renderOptions = (value: number, max: number) => {
     </>
   );
 };
+
+const SETTINGS = {
+  itemHeight: 86,
+  amount: 3,
+  tolerance: 2,
+  minIndex: 0,
+  maxIndex: 99,
+  startIndex: 1,
+};
+
+const getData = (offset: number, limit: number) => {
+  const data = [];
+  const range = SETTINGS.maxIndex - SETTINGS.minIndex + 1;
+  console.log(`offset [${offset} -> range ${range}] -> limit ${limit}`);
+
+  for (let i = 0; i < limit; i++) {
+    const index = (offset + i) % range;
+    const value = index < 0 ? index + range : index;
+    data.push({ id: value, text: value.toString().padStart(2, '0') });
+  }
+
+  return data;
+};
+
+const rowTemplate = <T extends { id: number; text: string }>(props: T) => (
+  <div className="item" key={props.id}>
+    {props.text}
+  </div>
+);
 
 const TimePicker = () => {
   const [hours, setHours] = useState(0);
@@ -58,13 +88,11 @@ const TimePicker = () => {
         <h4>Seconds</h4>
       </div>
       <div className="time-picker">
-        <div
-          className="time-section"
-          onTouchStart={handleTouchStart}
-          onTouchMove={(e) => handleTouchMove(e, setHours, 99, deltaYRef)}
-        >
-          {renderOptions(hours, 99)}
-        </div>
+        <VirtualScroller
+          settings={SETTINGS}
+          getMoreData={getData}
+          row={(props) => rowTemplate(props)}
+        />
         <div>:</div>
         <div
           className="time-section"
