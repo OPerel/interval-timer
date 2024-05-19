@@ -51,7 +51,7 @@ const rowTemplate = <T extends { id: number; text: string }>(props: T) => (
 );
 
 const TimePicker = () => {
-  const [hours, setHours] = useState(0);
+  // const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const deltaYRef = useRef(0);

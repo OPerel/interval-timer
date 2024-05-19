@@ -28,7 +28,7 @@ interface State<T> extends Settings {
   data: T[];
 }
 
-const setInitialState = <T extends unknown>(settings: Settings): State<T> => {
+const setInitialState = <T extends object>(settings: Settings): State<T> => {
   const { minIndex, maxIndex, startIndex, itemHeight, amount, tolerance } =
     settings;
   // 1) height of the visible part of the viewport (px)
@@ -76,7 +76,7 @@ const VirtualScroller = <T extends { id: number; text: string }>({
     topPaddingHeight,
     bottomPaddingHeight,
     data,
-    initialPosition,
+    // initialPosition,
     itemHeight,
     totalHeight,
   } = state;
@@ -114,6 +114,7 @@ const VirtualScroller = <T extends { id: number; text: string }>({
         scrollTop: totalHeight + itemHeight,
       },
     } as unknown as UIEvent<HTMLDivElement, globalThis.UIEvent>);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // const scroll = (eventData: SwipeEventData) => {
